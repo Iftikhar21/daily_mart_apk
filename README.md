@@ -1,97 +1,182 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+Oke, berikut versi **README.md** yang sudah saya ubah supaya sesuai dengan proyek kamu — yaitu **React Native (mobile)** yang terhubung ke **backend Laravel (daily_mart_be)**, khusus untuk role **kurir, petugas, dan user**.
 
-# Getting Started
+---
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+# 📱 Daily Mart Mobile App
 
-## Step 1: Start Metro
+A **React Native** mobile application connected to the **Laravel Backend (daily_mart_be)**.
+This app is designed for **couriers (kurir)**, **officers (petugas)**, and **users** who register and interact with the system.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+---
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## ⚙️ Requirements
 
-```sh
-# Using npm
+Before you start, make sure you have installed:
+
+* [Node.js](https://nodejs.org/)
+* [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+* [Android Studio](https://developer.android.com/studio) or physical Android device
+* [PHP](https://www.php.net/)
+* [Composer](https://getcomposer.org/)
+* [Laravel](https://laravel.com/docs)
+* MySQL database
+
+---
+
+## 🚀 Backend Setup (Laravel API)
+
+Clone the backend repository:
+
+```bash
+git clone https://github.com/yourusername/daily_mart_be.git
+cd daily_mart_be
+```
+
+### 1. Install dependencies
+
+```bash
+composer install
+```
+
+### 2. Configure `.env`
+
+Update your `.env` file and set up your database connection:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=daily_mart
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 3. Run migrations
+
+```bash
+php artisan migrate
+```
+
+### 4. Run the Laravel server
+
+> ⚠️ Make sure to replace `192.168.xxx.xxx` with your **local IP address** (found via `ipconfig`).
+
+```bash
+php artisan serve --host=192.168.xxx.xxx --port=8000
+```
+
+Example:
+
+```bash
+php artisan serve --host=192.168.112.171 --port=8000
+```
+
+---
+
+## 📲 Frontend Setup (React Native App)
+
+Clone the frontend (mobile) repository:
+
+```bash
+git clone https://github.com/yourusername/daily_mart_mobile.git
+cd daily_mart_mobile
+```
+
+### 1. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 2. Configure API connection
+
+Go to:
+
+```
+src/config/api.ts
+```
+
+Then edit the `BASE_URL` to match your backend server IP:
+
+```ts
+export const BASE_URL = 'http://192.168.xxx.xxx:8000/api';
+```
+
+Example:
+
+```ts
+export const BASE_URL = 'http://192.168.112.171:8000/api';
+```
+
+---
+
+## ▶️ Run the App
+
+### Step 1: Start Metro
+
+```bash
 npm start
-
-# OR using Yarn
+# or
 yarn start
 ```
 
-## Step 2: Build and run your app
+### Step 2: Run on Android
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Make sure your device/emulator is connected:
 
-### Android
+```bash
+adb devices
+```
 
-```sh
-# Using npm
+Then run:
+
+```bash
 npm run android
-
-# OR using Yarn
+# or
 yarn android
 ```
 
-### iOS
+> ⚠️ Ensure your **mobile device** and **backend server** are on the same Wi-Fi network!
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## 🧩 Role Information
 
-```sh
-bundle install
-```
+| Role        | Access                                                  |
+| ----------- | ------------------------------------------------------- |
+| **User**    | Register via app, login, and manage profile (pelanggan) |
+| **Kurir**   | Login to manage delivery tasks                          |
+| **Petugas** | Login to manage operational duties                      |
 
-Then, and every time you update your native dependencies, run:
+---
 
-```sh
-bundle exec pod install
-```
+## 💡 Notes
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+* Registration (`/register`) is only for **new users**.
+* Kurir and Petugas accounts are created by the admin from the backend panel.
+* After login, a **user** will fill the **Pelanggan** (customer) table data.
 
-```sh
-# Using npm
-npm run ios
+---
 
-# OR using Yarn
-yarn ios
-```
+## 🛠 Troubleshooting
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+If you face issues:
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+* Run `adb kill-server && adb start-server`
+* Check IP with `ipconfig`
+* Ensure `php artisan serve` and `npm start` are running together
 
-## Step 3: Modify your app
+---
 
-Now that you have successfully run the app, let's make changes!
+## 🏁 Summary
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+| Component       | Command                                                |
+| --------------- | ------------------------------------------------------ |
+| Start Backend   | `php artisan serve --host=192.168.xxx.xxx --port=8000` |
+| Start Metro     | `npm start`                                            |
+| Run Android App | `npm run android`                                      |
+| API URL         | `http://192.168.xxx.xxx:8000/api`                      |
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+---
