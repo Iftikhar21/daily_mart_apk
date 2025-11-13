@@ -14,6 +14,7 @@ export default function LoginScreen({ navigation }: any) {
 
             await AsyncStorage.setItem('token', token);
             await AsyncStorage.setItem('role', user.role);
+            await AsyncStorage.setItem('user', JSON.stringify(user)); // <– simpan data user lengkap
 
             // Navigasi berdasarkan role
             if (user.role === 'user') navigation.replace('DashboardPelanggan');
