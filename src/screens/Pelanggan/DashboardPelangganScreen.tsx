@@ -1,9 +1,20 @@
+// DashboardPelanggan.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, ActivityIndicator, StyleSheet } from 'react-native';
-import api from '../../config/api';
+import {
+    View,
+    Text,
+    FlatList,
+    Image,
+    ActivityIndicator,
+    StyleSheet,
+    TouchableOpacity,
+    Alert,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../../config/api';
+import { Heart, ShoppingCart } from 'lucide-react-native';
+import { useFavorites } from '../../context/FavoritesContext';
 
-// 🧱 Definisikan tipe data
 interface Branch {
     id: number;
     nama_cabang: string;
@@ -21,6 +32,7 @@ interface Product {
     harga: number;
     gambar_url: string;
     branch?: Branch;
+    stok: number;
 }
 
 export default function DashboardPelanggan() {
@@ -28,7 +40,10 @@ export default function DashboardPelanggan() {
     const [loading, setLoading] = useState(true);
     const [userName, setUserName] = useState('');
     const [branchName, setBranchName] = useState('');
-    const [categoryName, setCategoryName] = useState('');
+    const [cart, setCart] = useState<number[]>([]);
+
+    // Gunakan favorites dari context
+    const { favorites, toggleFavorite } = useFavorites();
 
     useEffect(() => {
         const getUser = async () => {
@@ -61,8 +76,6 @@ export default function DashboardPelanggan() {
                 if (data.length > 0) {
                     const firstBranch = data[0].branch?.nama_cabang || '';
                     setBranchName(firstBranch);
-                    const firstCategory = data[0].kategori?.nama_kategori || '';
-                    setCategoryName(firstCategory);
                 }
             } catch (error: any) {
                 console.error('Gagal mengambil produk:', error.response?.data || error.message);
@@ -73,6 +86,12 @@ export default function DashboardPelanggan() {
 
         fetchProducts();
     }, []);
+
+    const toggleCart = (id: number) => {
+        setCart((prev) =>
+            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+    };
 
     if (loading) {
         return (
@@ -99,9 +118,42 @@ export default function DashboardPelanggan() {
                             <Image source={{ uri: item.gambar_url }} style={styles.image} />
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.name}>{item.nama_produk}</Text>
-                                <Text style={styles.category}>Kategori: {item.kategori?.nama_kategori || '-'}</Text>
-                                <Text style={styles.price}>Rp {item.harga.toLocaleString('id-ID')}</Text>
-                                <Text style={styles.branch}>Cabang: {item.branch?.nama_cabang || '-'}</Text>
+                                <Text style={styles.category}>
+                                    Kategori: {item.kategori?.nama_kategori || '-'}
+                                </Text>
+                                <Text style={styles.price}>
+                                    Rp {item.harga.toLocaleString('id-ID')}
+                                </Text>
+                                <Text style={styles.branch}>
+                                    Cabang: {item.branch?.nama_cabang || '-'}
+                                </Text>
+                                <Text style={styles.stock}>
+                                    Stok: {item.stok}
+                                </Text>
+                            </View>
+
+                            <View style={styles.iconContainer}>
+                                <TouchableOpacity
+                                    onPress={() => toggleFavorite(item.id)}
+                                    style={styles.iconButton}
+                                >
+                                    <Heart
+                                        size={22}
+                                        color={favorites.includes(item.id) ? 'red' : '#888'}
+                                        fill={favorites.includes(item.id) ? 'red' : 'none'}
+                                    />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    onPress={() => toggleCart(item.id)}
+                                    style={styles.iconButton}
+                                >
+                                    <ShoppingCart
+                                        size={22}
+                                        color={cart.includes(item.id) ? '#007BFF' : '#888'}
+                                        fill={cart.includes(item.id) ? '#007BFF' : 'none'}
+                                    />
+                                </TouchableOpacity>
                             </View>
                         </View>
                     )}
@@ -111,6 +163,8 @@ export default function DashboardPelanggan() {
     );
 }
 
+// Styles tetap sama...
+
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#f8f9fa', padding: 16 },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
@@ -119,6 +173,7 @@ const styles = StyleSheet.create({
     empty: { textAlign: 'center', color: '#999', marginTop: 20 },
     card: {
         flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#fff',
         borderRadius: 8,
         padding: 10,
@@ -133,4 +188,18 @@ const styles = StyleSheet.create({
     price: { color: '#28a745', fontWeight: '600', marginTop: 2 },
     branch: { color: '#666', fontSize: 12, marginTop: 4 },
     category: { color: '#666', fontSize: 12, marginTop: 2 },
+    iconContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        marginLeft: 10,
+    },
+    iconButton: {
+        padding: 4,
+    },
+    stock: {
+        color: '#444',
+        fontSize: 12,
+        marginTop: 2,
+        fontWeight: '600',
+    },
 });

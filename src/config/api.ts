@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const BASE_URL = 'http://192.168.55.162:8000/api'; // ganti sesuai IP kamu
+export const BASE_URL = 'http://192.168.0.73:8000/api'; // ganti sesuai IP kamu
 
 const api = axios.create({
     baseURL: BASE_URL,
